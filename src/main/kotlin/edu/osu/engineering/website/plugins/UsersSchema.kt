@@ -1,5 +1,6 @@
 package edu.osu.engineering.website.plugins
 
+import edu.osu.engineering.website.plugins.UserService.Users
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
@@ -8,13 +9,14 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
-data class ExposedUser(val name: String, val age: Int)
+data class ExposedUser(val name: String, val email: String, val password: String)
 
 class UserService(database: Database) {
     object Users : Table() {
         val id = integer("id").autoIncrement()
-        val name = varchar("name", length = 50)
-        val age = integer("age")
+        val name = varchar("name", 50)
+        val email = varchar("email", 50)
+        val password = varchar("password", 256) // hashed
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -28,14 +30,15 @@ class UserService(database: Database) {
     suspend fun create(user: ExposedUser): Int = dbQuery {
         Users.insert {
             it[name] = user.name
-            it[age] = user.age
+            it[email] = user.email
+            it[password] = user.password
         }[Users.id]
     }
 
     suspend fun read(id: Int): ExposedUser? {
         return dbQuery {
-            Users.select { Users.id eq id }
-                .map { ExposedUser(it[Users.name], it[Users.age]) }
+            Users.selectAll().where { Users.id eq id }
+                .map { ExposedUser(it[Users.name], it[Users.email], it[Users.password]) }
                 .singleOrNull()
         }
     }
@@ -44,14 +47,15 @@ class UserService(database: Database) {
         dbQuery {
             Users.update({ Users.id eq id }) {
                 it[name] = user.name
-                it[age] = user.age
+                it[email] = user.email
+                it[password] = user.password
             }
         }
     }
 
     suspend fun delete(id: Int) {
         dbQuery {
-            Users.deleteWhere { Users.id.eq(id) }
+            Users.deleteWhere { Users.id eq id }
         }
     }
 

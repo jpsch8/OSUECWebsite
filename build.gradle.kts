@@ -11,14 +11,16 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
 }
 
-group = "com.example"
+group = "edu.osu.engineering.website"
 version = "0.0.1"
 
 application {
-    mainClass.set("com.example.ApplicationKt")
+    mainClass.set("edu.osu.engineering.website.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+
+    ktor.docker.jreVersion.set(JavaVersion.VERSION_20)
 }
 
 repositories {

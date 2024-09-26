@@ -8,15 +8,16 @@ import io.ktor.server.routing.*
 import java.io.File
 
 fun Application.configureSecurity() {
-    install(Authentication) {
-        firebase {
-            adminFile = File("path/to/admin/file.json")
-            realm = "My Server"
-            validate { token ->
-                MyAuthenticatedUser(id = token.uid)
-            }
-        }
-    }
+    // dont know how to use this yet
+//    install(Authentication) {
+//        firebase {
+//            adminFile = File("path/to/admin/file.json")
+//            realm = "My Server"
+//            validate { token ->
+//                MyAuthenticatedUser(id = token.uid)
+//            }
+//        }
+//    }
     authentication {
         basic(name = "myauth1") {
             realm = "Ktor Server"

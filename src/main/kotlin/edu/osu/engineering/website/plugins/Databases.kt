@@ -29,9 +29,7 @@ fun Application.configureDatabases() {
             val user = userService.read(id)
             if (user != null) {
                 call.respond(HttpStatusCode.OK, user)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            } else call.respond(HttpStatusCode.NotFound)
         }
         
         // Update user
